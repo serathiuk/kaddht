@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+option java_package = "dev.serathiuk.kademlia.server.grpc";
+option java_multiple_files = true;
+
+message NodeId {
+  string id = 1;
+}
+
+message Node {
+  string id = 1;
+  string host = 2;
+  uint32 port = 3;
+}
+
+message Entry {
+  string key = 1;
+  string value = 2;
+}
+
+message StoreResponse {
+  string key = 1;
+  bytes value = 2;
+  Node node = 3;
+  bool putInNextNode = 4;
+}
+
+message FindValueRequest {
+  string key = 1;
+}
+
+message FindValueResponse {
+  string key = 1;
+  bytes value = 2;
+  Node node = 3;
+  bool getInNextNode = 4;
+}
+
+message Empty {
+
+}
+
+service Kademlia {
+  rpc findNode(NodeId) returns (Node);
+  rpc ping(NodeId) returns (NodeId);
+  rpc store(Entry) returns (StoreResponse);
+  rpc findValue(FindValueRequest) returns (FindValueResponse);
+}
