@@ -4,8 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigInteger;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class NodeRangeTest {
 
@@ -36,6 +35,16 @@ class NodeRangeTest {
         assertTrue(nodeRange.containsHash(new BigInteger("9876543210")));
         assertTrue(nodeRange.containsHash(new BigInteger("9999999999")));
         assertFalse(nodeRange.containsHash(new BigInteger("10000000000")));
+    }
+
+    @Test
+    public void testNodeRangeGenerate() {
+        NodeRange nodeRange = NodeRange.generate(10);
+        assertTrue(nodeRange.containsHash(new BigInteger("1024")));
+        assertTrue(nodeRange.containsHash(new BigInteger("2047")));
+        assertFalse(nodeRange.containsHash(new BigInteger("2048")));
+        assertEquals(new BigInteger("1024"), nodeRange.hashStart());
+        assertEquals(new BigInteger("2047"), nodeRange.hashEnd());
     }
 
 }

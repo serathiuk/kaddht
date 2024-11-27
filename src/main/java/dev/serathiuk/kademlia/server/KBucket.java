@@ -45,4 +45,15 @@ public class KBucket {
         };
     }
 
+    public NodeRange getNodeRange() {
+        return nodeRange;
+    }
+
+    public int getMaxBucketSize() {
+        return maxBucketSize;
+    }
+
+    public KeyService getKeyService() {
+        return keyService;
+    }
 }

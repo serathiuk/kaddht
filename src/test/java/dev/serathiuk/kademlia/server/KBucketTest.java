@@ -19,7 +19,7 @@ class KBucketTest {
     void setUp() {
         kBucket = new KBucket(keyService, NodeRangeBuilder.aNodeRange()
                 .withStart(new BigInteger("0"))
-                .withEnd(new BigInteger("255"))
+                .withEnd(new BigInteger("2").pow(256).subtract(BigInteger.ONE))
                 .build(), 2);
     }
 
@@ -32,7 +32,8 @@ class KBucketTest {
                 .build();
 
         kBucket.addNode(node);
-        assertEquals(node.getId(), kBucket.getNearestNode("teste").get().getId());
+
+        assertEquals(node.getId(), kBucket.getNearestNode(node.getId()).get().getId());
     }
 
     @Test
@@ -53,9 +54,8 @@ class KBucketTest {
 
         kBucket.addNode(node2);
 
-        assertEquals(node2.getId(), kBucket.getNearestNode("teste1").get().getId());
-        assertEquals(node2.getId(), kBucket.getNearestNode("teste2").get().getId());
-        assertEquals(node2.getId(), kBucket.getNearestNode("teste3").get().getId());
+        assertEquals(node2.getId(), kBucket.getNearestNode(node2.getId()).get().getId());
+        assertEquals(node1.getId(), kBucket.getNearestNode(node1.getId()).get().getId());
     }
 
 
