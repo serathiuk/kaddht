@@ -3,21 +3,21 @@ package dev.serathiuk.kademlia.server;
 import dev.serathiuk.kademlia.server.grpc.Node;
 
 import java.math.BigInteger;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.Optional;
+import java.util.*;
 
 public class KBucket {
 
     private int maxBucketSize;
     private NodeRange nodeRange;
     private KeyService keyService;
+    private int bucketIndex;
     private LinkedList<Node> nodes = new LinkedList<>();
 
-    public KBucket(KeyService keyService, NodeRange nodeRange, int maxBucketSize) {
+    public KBucket(KeyService keyService, NodeRange nodeRange, int bucketIndex, int maxBucketSize) {
         this.maxBucketSize = maxBucketSize;
         this.keyService = keyService;
         this.nodeRange = nodeRange;
+        this.bucketIndex = bucketIndex;
     }
 
     public void addNode(Node node) {
@@ -43,6 +43,14 @@ public class KBucket {
             var distance2 = keyService.hash(n2.getId()).xor(nodeId);
             return distance1.compareTo(distance2);
         };
+    }
+
+    public List<Node> getNodes() {
+        return Collections.unmodifiableList(nodes);
+    }
+
+    public int getBucketIndex() {
+        return bucketIndex;
     }
 
     public NodeRange getNodeRange() {

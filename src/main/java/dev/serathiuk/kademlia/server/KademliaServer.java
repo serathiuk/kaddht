@@ -4,17 +4,22 @@ import dev.serathiuk.kademlia.server.grpc.*;
 import io.grpc.Grpc;
 import io.grpc.InsecureServerCredentials;
 import io.grpc.Server;
+import io.grpc.stub.StreamObserver;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 public class KademliaServer extends KademliaGrpc.KademliaImplBase implements Runnable {
 
+    private KeyService keyService;
+    private KBuckets kBuckets;
     private Server server;
 
     private boolean started = false;
 
     public KademliaServer() {
+        this.keyService = new KeyService(258);
+        this.kBuckets = new KBuckets(keyService, 2);
     }
 
     @Override
@@ -45,6 +50,26 @@ public class KademliaServer extends KademliaGrpc.KademliaImplBase implements Run
 //            System.err.println( "Node "+node.getId());
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void findNode(NodeId request, StreamObserver<Node> responseObserver) {
+        super.findNode(request, responseObserver);
+    }
+
+    @Override
+    public void ping(NodeId request, StreamObserver<NodeId> responseObserver) {
+        super.ping(request, responseObserver);
+    }
+
+    @Override
+    public void store(Entry request, StreamObserver<StoreResponse> responseObserver) {
+        super.store(request, responseObserver);
+    }
+
+    @Override
+    public void findValue(FindValueRequest request, StreamObserver<FindValueResponse> responseObserver) {
+        super.findValue(request, responseObserver);
     }
 
     public void shutdownNow() {

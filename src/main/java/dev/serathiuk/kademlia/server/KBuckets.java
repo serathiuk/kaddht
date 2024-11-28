@@ -20,7 +20,7 @@ public class KBuckets {
 
         buckets = IntStream.range(0, keyService.getKeySize())
                 .boxed()
-                .collect(Collectors.toMap(k -> k, k -> new KBucket(keyService, NodeRange.generate(k), maxBucketSize)));
+                .collect(Collectors.toMap(k -> k, k -> new KBucket(keyService, NodeRange.generate(k), k, maxBucketSize)));
     }
 
     public void addNode(Node node) {

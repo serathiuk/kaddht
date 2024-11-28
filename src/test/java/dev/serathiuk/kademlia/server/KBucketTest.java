@@ -20,7 +20,7 @@ class KBucketTest {
         kBucket = new KBucket(keyService, NodeRangeBuilder.aNodeRange()
                 .withStart(new BigInteger("0"))
                 .withEnd(new BigInteger("2").pow(256).subtract(BigInteger.ONE))
-                .build(), 2);
+                .build(),  0, 2);
     }
 
     @Test

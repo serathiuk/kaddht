@@ -1,6 +1,7 @@
 package dev.serathiuk.kademlia.server;
 
 import dev.serathiuk.kademlia.server.grpc.Node;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -53,12 +54,38 @@ class KBucketsTest {
     @Test
     void testAddNode() {
         var kBuckets = new KBuckets(keyService, 2);
-        var node = Node.newBuilder().setId("1").build();
+        var node = Node.newBuilder()
+                .setId(keyService.generateId("localhost", 8080))
+                .setPort(8080)
+                .setHost("localhost")
+                .build();
+
         kBuckets.addNode(node);
 
-        var kBucket = kBuckets.getBuckets().get(0);
-        assertEquals(1, kBucket.getNodes().size());
-        assertEquals(node, kBucket.getNodes().get(0));
+        var node2 = Node.newBuilder()
+                .setId(keyService.generateId("localhost", 8081))
+                .setPort(8081)
+                .setHost("localhost")
+                .build();
+
+        kBuckets.addNode(node2);
+
+        var node3 = Node.newBuilder()
+                .setId(keyService.generateId("localhost", 8079))
+                .setPort(8079)
+                .setHost("localhost")
+                .build();
+
+        kBuckets.addNode(node3);
+
+        var bucket1 = kBuckets.getBuckets().get(254);
+        var bucket2 = kBuckets.getBuckets().get(255);
+
+        assertEquals(2, bucket1.getNodes().size());
+        assertEquals(1, bucket2.getNodes().size());
+
+        Assertions.assertThat(bucket1.getNodes()).contains(node, node2);
+        Assertions.assertThat(bucket2.getNodes()).contains(node3);
     }
 
 }
