@@ -1,57 +1,41 @@
 package dev.serathiuk.kademlia.server;
 
-import dev.serathiuk.kademlia.server.grpc.Node;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigInteger;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class KBucketTest {
 
     private static final String LOCALHOST = "localhost";
 
-    private final KeyService keyService = new KeyService(256);
+    private LocalKademliaNode localKademliaNode;
     private KBucket kBucket;
 
     @BeforeEach
     void setUp() {
-        kBucket = new KBucket(keyService, NodeRangeBuilder.aNodeRange()
+        localKademliaNode = new LocalKademliaNode(LOCALHOST, 9999);
+
+        kBucket = new KBucket(localKademliaNode, NodeRangeBuilder.aNodeRange()
                 .withStart(new BigInteger("0"))
                 .withEnd(new BigInteger("2").pow(256).subtract(BigInteger.ONE))
-                .build(),  0, 2);
+                .build(), 0);
     }
 
     @Test
     void testKBucketWithOneNode() {
-        Node node = Node.newBuilder()
-                .setId(keyService.generateId(LOCALHOST, 8080))
-                .setHost(LOCALHOST)
-                .setPort(8080)
-                .build();
-
-        kBucket.addNode(node);
-
-        assertEquals(node.getId(), kBucket.getNearestNode(node.getId()).get().getId());
+        kBucket.addNode(localKademliaNode);
+        assertEquals(localKademliaNode.getId(), kBucket.getNearestNode(localKademliaNode.getId()).get().getId());
     }
 
     @Test
     void testKBucketWithTwoNodes() {
-        Node node1 = Node.newBuilder()
-                .setId(keyService.generateId(LOCALHOST, 8080))
-                .setPort(8080)
-                .setHost(LOCALHOST)
-                .build();
-
+        var node1 = new LocalKademliaNode(LOCALHOST, 8080);
         kBucket.addNode(node1);
 
-        Node node2 = Node.newBuilder()
-                .setId(keyService.generateId(LOCALHOST, 8081))
-                .setHost(LOCALHOST)
-                .setPort(8081)
-                .build();
-
+        var node2 = new LocalKademliaNode(LOCALHOST, 8081);
         kBucket.addNode(node2);
 
         assertEquals(node2.getId(), kBucket.getNearestNode(node2.getId()).get().getId());
@@ -61,30 +45,18 @@ class KBucketTest {
 
     @Test
     void testKBucketWithThreeNodes() {
-        Node node1 = Node.newBuilder()
-                .setId(keyService.generateId(LOCALHOST, 8080))
-                .setPort(8080)
-                .setHost(LOCALHOST)
-                .build();
-        kBucket.addNode(node1); // add 1
+        var node1 = new LocalKademliaNode(LOCALHOST, 8080);
+        kBucket.addNode(node1);
 
-        Node node2 = Node.newBuilder()
-                .setId(keyService.generateId(LOCALHOST, 8081))
-                .setPort(8081)
-                .setHost(LOCALHOST)
-                .build();
-        kBucket.addNode(node2); //add 2
+        var node2 = new LocalKademliaNode(LOCALHOST, 8081);
+        kBucket.addNode(node2);
 
-        Node node3 = Node.newBuilder()
-                .setId(keyService.generateId(LOCALHOST, 8082))
-                .setPort(8082)
-                .setHost(LOCALHOST)
-                .build();
-        kBucket.addNode(node3); // 1 removed and 3 added
+        var node3 = new LocalKademliaNode(LOCALHOST, 8082);
+        kBucket.addNode(node3);
 
-        assertEquals(node2.getId(), kBucket.getNearestNode("teste1").get().getId());
-        assertEquals(node2.getId(), kBucket.getNearestNode("teste2").get().getId());
-        assertEquals(node2.getId(), kBucket.getNearestNode("teste3").get().getId());
+        assertEquals(node2.getId(), kBucket.getNearestNode("chavequalquer").get().getId());
+        assertEquals(node2.getId(), kBucket.getNearestNode("testandochave").get().getId());
+        assertEquals(node2.getId(), kBucket.getNearestNode("aleatoriamentealeatoria").get().getId());
     }
 
 }

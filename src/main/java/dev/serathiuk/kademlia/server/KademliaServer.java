@@ -11,15 +11,15 @@ import java.util.concurrent.TimeUnit;
 
 public class KademliaServer extends KademliaGrpc.KademliaImplBase implements Runnable {
 
-    private KeyService keyService;
+    private LocalKademliaNode rootNode;
     private KBuckets kBuckets;
     private Server server;
 
     private boolean started = false;
 
     public KademliaServer() {
-        this.keyService = new KeyService(258);
-        this.kBuckets = new KBuckets(keyService, 2);
+        this.rootNode = new LocalKademliaNode("localhost", 8080);
+        this.kBuckets = new KBuckets(rootNode);
     }
 
     @Override

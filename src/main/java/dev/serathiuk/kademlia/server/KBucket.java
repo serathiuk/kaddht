@@ -1,27 +1,25 @@
 package dev.serathiuk.kademlia.server;
 
-import dev.serathiuk.kademlia.server.grpc.Node;
-
-import java.math.BigInteger;
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 
 public class KBucket {
 
-    private int maxBucketSize;
-    private NodeRange nodeRange;
-    private KeyService keyService;
     private int bucketIndex;
-    private LinkedList<Node> nodes = new LinkedList<>();
+    private LocalKademliaNode rootNode;
+    private NodeRange nodeRange;
+    private LinkedList<KademliaNode> nodes = new LinkedList<>();
 
-    public KBucket(KeyService keyService, NodeRange nodeRange, int bucketIndex, int maxBucketSize) {
-        this.maxBucketSize = maxBucketSize;
-        this.keyService = keyService;
+    public KBucket(LocalKademliaNode rootNode, NodeRange nodeRange, int bucketIndex) {
         this.nodeRange = nodeRange;
+        this.rootNode = rootNode;
         this.bucketIndex = bucketIndex;
     }
 
-    public void addNode(Node node) {
-        if (nodes.size() < maxBucketSize) {
+    public void addNode(KademliaNode node) {
+        if (nodes.size() < KademliaNode.MAX_BUCKET_SIZE) {
             nodes.add(node);
         } else {
             nodes.pollFirst();
@@ -29,39 +27,25 @@ public class KBucket {
         }
     }
 
-    public Optional<Node> getNearestNode(String id) {
-        var hash = keyService.hash(id);
+    public Optional<KademliaNode> getNearestNode(String id) {
+        var hash = KeyUtil.hash(id);
+
         if(!nodeRange.containsHash(hash))
             return Optional.empty();
 
-        return nodes.stream().min(getNodeComparator(hash));
+        return nodes.stream().min(KademliaNode.comparatorByDistance(hash));
     }
 
-    private Comparator<Node> getNodeComparator(BigInteger nodeId) {
-        return (n1, n2) -> {
-            var distance1 = keyService.hash(n1.getId()).xor(nodeId);
-            var distance2 = keyService.hash(n2.getId()).xor(nodeId);
-            return distance1.compareTo(distance2);
-        };
-    }
-
-    public List<Node> getNodes() {
+    public List<KademliaNode> getNodes() {
         return Collections.unmodifiableList(nodes);
-    }
-
-    public int getBucketIndex() {
-        return bucketIndex;
     }
 
     public NodeRange getNodeRange() {
         return nodeRange;
     }
 
-    public int getMaxBucketSize() {
-        return maxBucketSize;
+    public int getBucketIndex() {
+        return bucketIndex;
     }
 
-    public KeyService getKeyService() {
-        return keyService;
-    }
 }
