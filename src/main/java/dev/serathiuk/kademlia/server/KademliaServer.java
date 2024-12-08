@@ -18,7 +18,7 @@ public class KademliaServer extends KademliaGrpc.KademliaImplBase implements Run
     private boolean started = false;
 
     public KademliaServer() {
-        this.rootNode = new LocalKademliaNode("localhost", 8080);
+        this.rootNode = new LocalKademliaNode(new KademliaConfig("localhost", 8080, 256, 2));
         this.kBuckets = new KBuckets(rootNode);
     }
 

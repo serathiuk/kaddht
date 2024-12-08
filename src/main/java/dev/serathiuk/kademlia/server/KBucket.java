@@ -19,7 +19,7 @@ public class KBucket {
     }
 
     public void addNode(KademliaNode node) {
-        if (nodes.size() < KademliaNode.MAX_BUCKET_SIZE) {
+        if (nodes.size() < rootNode.getConfig().maxBucketSize()) {
             nodes.add(node);
         } else {
             nodes.pollFirst();
@@ -28,7 +28,7 @@ public class KBucket {
     }
 
     public Optional<KademliaNode> getNearestNode(String id) {
-        var hash = KeyUtil.hash(id);
+        var hash = rootNode.getConfig().hash(id);
 
         if(!nodeRange.containsHash(hash))
             return Optional.empty();

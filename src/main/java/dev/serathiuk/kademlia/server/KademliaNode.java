@@ -1,20 +1,21 @@
 package dev.serathiuk.kademlia.server;
 
+import dev.serathiuk.kademlia.server.grpc.FindValueResponse;
+import dev.serathiuk.kademlia.server.grpc.StoreResponse;
+
 import java.math.BigInteger;
 import java.util.Comparator;
 
 public interface KademliaNode {
-    int KEY_SIZE = 256;
-    int MAX_BUCKET_SIZE = 2;
-    BigInteger MAX_KEYS = new BigInteger("2").pow(KEY_SIZE).subtract(new BigInteger("1"));
-
+    KademliaNode findNode(String id);
+    void ping(String id);
+    StoreResponse store(String key, String value);
+    FindValueResponse findValue(String key);
     String getId();
+    BigInteger getHash();
     String getHost();
     int getPort();
 
-    default BigInteger getHash() {
-        return KeyUtil.hash(this.getId());
-    }
 
     default BigInteger getDistance(KademliaNode node) {
         return this.getHash().xor(node.getHash()).abs();

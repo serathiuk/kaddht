@@ -14,7 +14,7 @@ public class KBuckets {
     public KBuckets(LocalKademliaNode rootNode) {
         this.rootNode = rootNode;
 
-        buckets = IntStream.range(0, KademliaNode.KEY_SIZE)
+        buckets = IntStream.range(0, rootNode.getConfig().keySize())
                 .boxed()
                 .collect(Collectors.toMap(k -> k, k -> new KBucket(rootNode, NodeRange.generate(k), k)));
     }
@@ -32,6 +32,10 @@ public class KBuckets {
                 .stream()
                 .filter(kBucket -> kBucket.getNodeRange().containsHash(node.getDistance(rootNode)))
                 .findFirst();
+    }
+
+    public Optional<KBucket> getBucket(int index) {
+        return Optional.ofNullable(buckets.get(index));
     }
 
     public Map<Integer, KBucket> getBuckets() {

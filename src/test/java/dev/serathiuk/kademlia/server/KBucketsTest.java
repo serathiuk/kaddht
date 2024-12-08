@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class KBucketsTest {
 
-    private final LocalKademliaNode localKademliaNode = new LocalKademliaNode("localhost", 9999);
+    private final LocalKademliaNode localKademliaNode = new LocalKademliaNode(new KademliaConfig("localhost", 9999, 256, 2));
 
 
     @Test
@@ -35,20 +35,20 @@ class KBucketsTest {
     void testAddNode() {
         var kBuckets = new KBuckets(localKademliaNode);
 
-        var node = new LocalKademliaNode("serathiuk.dev", 1000);
+        var node = new LocalKademliaNode(new KademliaConfig("serathiuk.dev", 1000, 256, 2));
         kBuckets.addNode(node);
 
-        var node2 = new LocalKademliaNode("serathi.uk", 5000);
+        var node2 = new LocalKademliaNode(new KademliaConfig("serathi.uk", 5000, 256, 2));
         kBuckets.addNode(node2);
 
-        var node3 = new LocalKademliaNode("serathiuk.com", 10000);
+        var node3 = new LocalKademliaNode(new KademliaConfig("serathiuk.com", 10000, 256, 2));
         kBuckets.addNode(node3);
 
-        var node4 = new LocalKademliaNode("serathiuk.com.br", 15000);
+        var node4 = new LocalKademliaNode(new KademliaConfig("serathiuk.com.br", 15000, 256, 2));
         kBuckets.addNode(node4);
 
-        var bucket1 = kBuckets.getBuckets().get(251);
-        var bucket2 = kBuckets.getBuckets().get(254);
+        var bucket1 = kBuckets.getBucket(1).orElse(null);
+        var bucket2 = kBuckets.getBucket(2).orElse(null);
 
         assertEquals(2, bucket1.getNodes().size());
         assertEquals(1, bucket2.getNodes().size());

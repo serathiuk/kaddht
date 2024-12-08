@@ -16,7 +16,7 @@ class KBucketTest {
 
     @BeforeEach
     void setUp() {
-        localKademliaNode = new LocalKademliaNode(LOCALHOST, 9999);
+        localKademliaNode = new LocalKademliaNode(new KademliaConfig(LOCALHOST, 9999, 256, 2));
 
         kBucket = new KBucket(localKademliaNode, NodeRangeBuilder.aNodeRange()
                 .withStart(new BigInteger("0"))
@@ -32,10 +32,10 @@ class KBucketTest {
 
     @Test
     void testKBucketWithTwoNodes() {
-        var node1 = new LocalKademliaNode(LOCALHOST, 8080);
+        var node1 = new LocalKademliaNode(new KademliaConfig(LOCALHOST, 8080, 256, 2));
         kBucket.addNode(node1);
 
-        var node2 = new LocalKademliaNode(LOCALHOST, 8081);
+        var node2 = new LocalKademliaNode(new KademliaConfig(LOCALHOST, 8081, 256, 2));
         kBucket.addNode(node2);
 
         assertEquals(node2.getId(), kBucket.getNearestNode(node2.getId()).get().getId());
@@ -45,13 +45,13 @@ class KBucketTest {
 
     @Test
     void testKBucketWithThreeNodes() {
-        var node1 = new LocalKademliaNode(LOCALHOST, 8080);
+        var node1 = new LocalKademliaNode(new KademliaConfig(LOCALHOST, 8080, 256, 2));
         kBucket.addNode(node1);
 
-        var node2 = new LocalKademliaNode(LOCALHOST, 8081);
+        var node2 = new LocalKademliaNode(new KademliaConfig(LOCALHOST, 8081, 256, 2));
         kBucket.addNode(node2);
 
-        var node3 = new LocalKademliaNode(LOCALHOST, 8082);
+        var node3 = new LocalKademliaNode(new KademliaConfig(LOCALHOST, 8082, 256, 2));
         kBucket.addNode(node3);
 
         assertEquals(node2.getId(), kBucket.getNearestNode("chavequalquer").get().getId());
